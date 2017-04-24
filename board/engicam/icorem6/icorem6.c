@@ -269,13 +269,6 @@ int dram_init(void)
 	return 0;
 }
 
-#ifdef CONFIG_SPL_BUILD
-#include <libfdt.h>
-#include <spl.h>
-
-#include <asm/arch/crm_regs.h>
-#include <asm/arch/mx6-ddr.h>
-
 /* MMC board initialization is needed till adding DM support in SPL */
 #if defined(CONFIG_FSL_ESDHC) && !defined(CONFIG_DM_MMC)
 #include <mmc.h>
@@ -347,6 +340,14 @@ int board_mmc_init(bd_t *bis)
 	return 0;
 }
 #endif
+
+#ifdef CONFIG_SPL_BUILD
+#include <libfdt.h>
+#include <spl.h>
+
+#include <asm/arch/crm_regs.h>
+#include <asm/arch/mx6-ddr.h>
+
 
 /*
  * Driving strength:

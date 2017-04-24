@@ -196,6 +196,13 @@
 # define CONFIG_VIDEO_BMP_LOGO
 #endif
 
+/* Secure boot (HAB) support */
+#ifdef CONFIG_SECURE_BOOT
+# define CONFIG_CSF_SIZE		0x2000
+# define CONFIG_SYS_FSL_SEC_COMPAT	4
+# define CONFIG_CMD_DEKBLOB
+#endif
+
 /* SPL */
 #ifdef CONFIG_SPL
 # ifdef CONFIG_NAND_MXS
