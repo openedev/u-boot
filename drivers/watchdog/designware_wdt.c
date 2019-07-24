@@ -45,9 +45,7 @@ static void designware_wdt_enable(void)
 
 static unsigned int designware_wdt_is_enabled(void)
 {
-	unsigned long val;
-	val = readl((CONFIG_DW_WDT_BASE + DW_WDT_CR));
-	return val & 0x1;
+	return readl(CONFIG_DW_WDT_BASE + DW_WDT_CR) & DW_WDT_CR_RMOD_OFFSET;
 }
 
 #if defined(CONFIG_HW_WATCHDOG)
