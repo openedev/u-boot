@@ -14,7 +14,6 @@
 
 #define DW_WDT_CR_EN_OFFSET	0x00
 #define DW_WDT_CR_RMOD_OFFSET	0x01
-#define DW_WDT_CR_RMOD_VAL	0x00
 #define DW_WDT_CRR_RESTART_VAL	0x76
 
 /*
@@ -38,9 +37,11 @@ static int designware_wdt_settimeout(unsigned int timeout)
 
 static void designware_wdt_enable(void)
 {
-	writel(((DW_WDT_CR_RMOD_VAL << DW_WDT_CR_RMOD_OFFSET) |
-	      (0x1 << DW_WDT_CR_EN_OFFSET)),
-	      (CONFIG_DW_WDT_BASE + DW_WDT_CR));
+	u32 val = readl(CONFIG_DW_WDT_BASE + DW_WDT_CR);
+
+	/* Enable watchdog */
+	val |= DW_WDT_CR_RMOD_OFFSET;
+	writel(val, CONFIG_DW_WDT_BASE + DW_WDT_CR);
 }
 
 static unsigned int designware_wdt_is_enabled(void)
