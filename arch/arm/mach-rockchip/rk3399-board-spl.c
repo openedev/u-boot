@@ -15,7 +15,7 @@
 #include <asm/io.h>
 #include <asm/arch-rockchip/bootrom.h>
 #include <asm/arch-rockchip/clock.h>
-#include <asm/arch-rockchip/cru_rk3399.h>
+#include <asm/arch-rockchip/cru.h>
 #include <asm/arch-rockchip/grf_rk3399.h>
 #include <asm/arch-rockchip/hardware.h>
 #include <asm/arch-rockchip/periph.h>
@@ -232,7 +232,7 @@ static void rk3399_force_power_on_reset(void)
 void spl_board_init(void)
 {
 #if defined(SPL_GPIO_SUPPORT)
-	struct rk3399_cru *cru = rockchip_get_cru();
+	struct rockchip_cru *cru = rockchip_get_cru();
 
 	/*
 	 * The RK3399 resets only 'almost all logic' (see also in the TRM
