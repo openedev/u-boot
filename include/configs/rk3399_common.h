@@ -62,6 +62,8 @@
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	ENV_MEM_LAYOUT_SETTINGS \
 	"fdtfile=" CONFIG_DEFAULT_FDT_FILE "\0" \
+	"uuid_gpt_root=" ROOT_UUID "\0" \
+	"uuid_gpt_recovery=" RESV_UUID "\0" \
 	"partitions=" PARTS_DEFAULT \
 	ROCKCHIP_DEVICE_SETTINGS \
 	BOOTENV \
