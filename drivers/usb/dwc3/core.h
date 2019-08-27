@@ -162,6 +162,14 @@
 /* Global USB2 PHY Configuration Register */
 #define DWC3_GUSB2PHYCFG_PHYSOFTRST	(1 << 31)
 #define DWC3_GUSB2PHYCFG_SUSPHY		(1 << 6)
+#define DWC3_GUSB2PHYCFG_PHYIF_16BIT	(1 << 3)
+#define DWC3_GUSB2PHYCFG_USBTRDTIM_SHIFT	(10)
+#define DWC3_GUSB2PHYCFG_USBTRDTIM_MASK	(0xf << \
+		DWC3_GUSB2PHYCFG_USBTRDTIM_SHIFT)
+#define DWC3_GUSB2PHYCFG_USBTRDTIM_16BIT (0x5 << \
+		DWC3_GUSB2PHYCFG_USBTRDTIM_SHIFT)
+#define DWC3_GUSB2PHYCFG_USBTRDTIM_8BIT (0x9 << \
+		DWC3_GUSB2PHYCFG_USBTRDTIM_SHIFT)
 
 /* Global USB3 PIPE Control Register */
 #define DWC3_GUSB3PIPECTL_PHYSOFTRST	(1 << 31)
@@ -816,6 +824,7 @@ struct dwc3 {
 
 	unsigned		tx_de_emphasis_quirk:1;
 	unsigned		tx_de_emphasis:2;
+	unsigned 		usb2_phyif_utmi_width:5;
 	int			index;
 	struct list_head        list;
 };

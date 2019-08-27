@@ -1537,6 +1537,7 @@ config ARCH_ROCKCHIP
 	imply SYS_NS16550
 	imply TPL_SYSRESET
 	imply USB_FUNCTION_FASTBOOT
+	imply USB_GADGET
 
 config TARGET_THUNDERX_88XX
 	bool "Support ThunderX 88xx"
