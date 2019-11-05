@@ -68,6 +68,9 @@
 	"partitions=" PARTS_DEFAULT \
 	ROCKCHIP_DEVICE_SETTINGS \
 	BOOTENV \
+	"updbootcmd=" \
+		"setenv boot_syslinux_conf extlinux-updater/extlinux-updater.conf;" \
+		"run distro_bootcmd\0" \
 	"altbootcmd=" \
 		"setenv boot_syslinux_conf extlinux-rollback/extlinux-rollback.conf;" \
 		"run distro_bootcmd\0"

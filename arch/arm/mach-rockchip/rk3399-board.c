@@ -20,8 +20,7 @@ static void upgrade_bootcount_variable(void)
 
 	switch (val) {
 	case UPGRADE_NEED:
-		printf("%s: upgrade need?\n", __func__);
-		bootcount_store(3);
+		env_set("bootcmd", "run updbootcmd");
 		break;
 	case UPGRADE_DONE:
 		bootcount_store(0);
