@@ -47,6 +47,7 @@
 #ifdef CONFIG_ARM64
 #define ROOT_UUID "B921B045-1DF0-41C3-AF44-4C6F280D3FAE"
 #define RESV_UUID "8DA63339-0007-60C0-C436-083AC8230908"
+#define SWAP_UUID "0657FD6D-A4AB-43C4-84E5-0933C84BFF4F"
 #else
 #define ROOT_UUID "69DAD710-2CE4-4E3C-B16C-21A1D49ABED3;\0"
 #endif
@@ -56,10 +57,12 @@
 	"name=loader2,start=8MB,size=4MB,uuid=${uuid_gpt_loader2};" \
 	"name=trust,size=4M,uuid=${uuid_gpt_atf};" \
 	"name=boot,size=112M,bootable,uuid=${uuid_gpt_boot};" \
-	"name=rootfs,size=6G,uuid=${uuid_gpt_root};" \
 	"name=boot-rollback,size=112M,bootable,uuid=${uuid_gpt_boot};" \
-	"name=rootfs-rollback,size=6G,uuid=${uuid_gpt_recovery};" \
-	"name=data,size=-,uuid=${uuid_gpt_data}\0"
+	"name=updater,size=64M,bootable,uuid=${uuid_gpt_boot};" \
+	"name=rootfs-rollback,size=1331M,uuid=${uuid_gpt_recovery};" \
+	"name=swap,size=1G,uuid=${uuid_gpt_swap};" \
+	"name=data,size=3G,uuid=${uuid_gpt_data};" \
+	"name=rootfs,size=-,uuid=${uuid_gpt_root}\0"
 
 #endif
 
