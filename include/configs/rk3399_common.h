@@ -49,6 +49,7 @@
 
 #define ENV_MEM_LAYOUT_SETTINGS \
 	"upgrade_available=0\0" \
+	"upgrade_version=0.0-g0123456789ab\0" \
 	"scriptaddr=0x00500000\0" \
 	"pxefile_addr_r=0x00600000\0" \
 	"fdt_addr_r=0x01f00000\0" \
