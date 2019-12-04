@@ -287,12 +287,18 @@ static void process_fdt_options(const void *blob)
 #endif /* CONFIG_OF_CONTROL && CONFIG_SYS_TEXT_BASE */
 }
 
+__weak bool is_bootcount_inc(void)
+{
+	return true;
+}
+
 const char *bootdelay_process(void)
 {
 	char *s;
 	int bootdelay;
 
-	bootcount_inc();
+	if (is_bootcount_inc())
+		bootcount_inc();
 
 	s = env_get("bootdelay");
 	bootdelay = s ? (int)simple_strtol(s, NULL, 10) : CONFIG_BOOTDELAY;
