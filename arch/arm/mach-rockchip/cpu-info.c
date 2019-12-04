@@ -48,6 +48,11 @@ static char *get_reset_cause(void)
 	return cause;
 }
 
+bool is_bootcount_inc(void)
+{
+	return strcmp(get_reset_cause(), "WDOG") == 0;
+}
+
 int print_cpuinfo(void)
 {
 	printf("SoC: Rockchip %s\n", CONFIG_SYS_SOC);
