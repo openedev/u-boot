@@ -49,6 +49,7 @@
 
 #define ENV_MEM_LAYOUT_SETTINGS \
 	"upgrade_available=0\0" \
+	"bootpart=4\0" \
 	"upgrade_version=0.0-g0123456789ab\0" \
 	"scriptaddr=0x00500000\0" \
 	"pxefile_addr_r=0x00600000\0" \
@@ -73,6 +74,15 @@
 	"updbootcmd=" \
 		"setenv boot_syslinux_conf extlinux-updater/extlinux-updater.conf;" \
 		"run distro_bootcmd\0" \
+	"scan_dev_for_boot_part=" \
+		"part list ${devtype} ${devnum} -bootable devplist;" \
+		"env exists devplist || setenv devplist 1;" \
+		"setenv devplist ${bootpart};" \
+		"for distro_bootpart in ${devplist};" \
+			"do if fstype ${devtype} ${devnum}:${distro_bootpart} bootfstype;" \
+			"then run scan_dev_for_boot;" \
+			"fi;" \
+			"done\0" \
 	"altbootcmd=" \
 		"setenv boot_syslinux_conf extlinux-rollback/extlinux-rollback.conf;" \
 		"run distro_bootcmd\0"
