@@ -48,7 +48,6 @@
 #ifndef CONFIG_SPL_BUILD
 
 #define ENV_MEM_LAYOUT_SETTINGS \
-	"upgrade_available=0\0" \
 	"bootpart=4\0" \
 	"upgrade_version=0.0-g0123456789ab\0" \
 	"scriptaddr=0x00500000\0" \
@@ -71,9 +70,6 @@
 	"partitions=" PARTS_DEFAULT \
 	ROCKCHIP_DEVICE_SETTINGS \
 	BOOTENV \
-	"updbootcmd=" \
-		"setenv boot_syslinux_conf extlinux-updater/extlinux-updater.conf;" \
-		"run distro_bootcmd\0" \
 	"scan_dev_for_boot_part=" \
 		"part list ${devtype} ${devnum} -bootable devplist;" \
 		"env exists devplist || setenv devplist 1;" \
