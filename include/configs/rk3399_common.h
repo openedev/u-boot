@@ -84,7 +84,7 @@
 			"fi;" \
 			"done\0" \
 	"altbootcmd=" \
-		"setenv boot_syslinux_conf extlinux-rollback/extlinux-rollback.conf;" \
+		"setenv bootpart 5;" \
 		"run distro_bootcmd\0"
 
 #endif
