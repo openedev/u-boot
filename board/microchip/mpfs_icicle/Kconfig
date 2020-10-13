@@ -20,7 +20,27 @@ config BOARD_SPECIFIC_OPTIONS # dummy
 	def_bool y
 	select GENERIC_RISCV
 	select BOARD_EARLY_INIT_F
-	imply SMP
-	imply SYS_NS16550
+    imply CMD_DHCP
+    imply CMD_EXT2
+    imply CMD_EXT4
+    imply CMD_FAT
+    imply CMD_FS_GENERIC
+    imply CMD_NET
+    imply CMD_PING
+    imply CMD_MMC
+    imply DOS_PARTITION
+    imply EFI_PARTITION
+    imply IP_DYN
+    imply ISO_PARTITION
+    imply MACB
+    imply MII
+    imply NET_RANDOM_ETHADDR
+    imply PHY_LIB
+    imply PHY_VITESSE
+    imply SYS_NS16550
+    imply MMC
+    imply MMC_WRITE
+    imply MMC_SDHCI
+    imply MMC_SDHCI_CADENCE
 
 endif

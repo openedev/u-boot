@@ -79,6 +79,8 @@ DECLARE_GLOBAL_DATA_PTR;
 struct macb_dma_desc {
 	u32	addr;
 	u32	ctrl;
+	u32 addr_high;
+	u32 unused;
 };
 
 #define DMA_DESC_BYTES(n)	(n * sizeof(struct macb_dma_desc))
@@ -327,8 +329,7 @@ static int _macb_send(struct macb_device *macb, const char *name, void *packet,
 	macb->tx_ring[tx_head].addr = paddr;
 	barrier();
 	macb_flush_ring_desc(macb, TX);
-	/* Do we need check paddr and length is dcache line aligned? */
-	flush_dcache_range(paddr, paddr + ALIGN(length, ARCH_DMA_MINALIGN));
+	macb_writel(macb, TBQP, (u32)&macb->tx_ring[tx_head]);
 	macb_writel(macb, NCR, MACB_BIT(TE) | MACB_BIT(RE) | MACB_BIT(TSTART));
 
 	/*
@@ -344,7 +345,7 @@ static int _macb_send(struct macb_device *macb, const char *name, void *packet,
 		udelay(1);
 	}
 
-	dma_unmap_single(packet, length, paddr);
+	dma_unmap_single(paddr, length, DMA_TO_DEVICE);
 
 	if (i <= MACB_TX_TIMEOUT) {
 		if (ctrl & MACB_BIT(TX_UNDERRUN))
@@ -467,18 +468,18 @@ static void macb_phy_reset(struct macb_device *macb, const char *name)
 
 static int macb_phy_find(struct macb_device *macb, const char *name)
 {
-	int i;
+//	int i;
 	u16 phy_id;
 
 	/* Search for PHY... */
-	for (i = 0; i < 32; i++) {
-		macb->phy_addr = i;
+	//for (i = 0; i < 32; i++) {
+		macb->phy_addr = 9;
 		phy_id = macb_mdio_read(macb, macb->phy_addr, MII_PHYSID1);
 		if (phy_id != 0xffff) {
-			printf("%s: PHY present at %d\n", name, i);
+			printf("%s: PHY present at %d\n", name, macb->phy_addr);
 			return 0;
 		}
-	}
+	//}
 
 	/* PHY isn't up to snuff */
 	printf("%s: PHY not found\n", name);
@@ -732,9 +733,10 @@ static int gmac_init_multi_queues(struct macb_device *macb)
 	flush_dcache_range(macb->dummy_desc_dma, macb->dummy_desc_dma +
 			ALIGN(MACB_TX_DUMMY_DMA_DESC_SIZE, PKTALIGN));
 
-	for (i = 1; i < num_queues; i++)
+	for (i = 1; i < num_queues; i++) {
 		gem_writel_queue_TBQP(macb, macb->dummy_desc_dma, i - 1);
-
+		gem_writel_queue_RBQP(macb, macb->dummy_desc_dma, i - 1);
+	}
 	return 0;
 }
 
@@ -759,7 +761,8 @@ static void gmac_configure_dma(struct macb_device *macb)
 	else
 		dmacfg &= ~GEM_BIT(ENDIA_DESC);
 
-	dmacfg &= ~GEM_BIT(ADDR64);
+//	dmacfg &= ~GEM_BIT(ADDR64);
+	dmacfg |= GEM_BIT(ADDR64);
 	gem_writel(macb, DMACFG, dmacfg);
 }
 
@@ -788,6 +791,7 @@ static int _macb_init(struct macb_device *macb, const char *name)
 			paddr |= MACB_BIT(RX_WRAP);
 		macb->rx_ring[i].addr = paddr;
 		macb->rx_ring[i].ctrl = 0;
+		macb->rx_ring[i].addr_high = 0x0;
 		paddr += macb->rx_buffer_size;
 	}
 	macb_flush_ring_desc(macb, RX);
@@ -800,6 +804,7 @@ static int _macb_init(struct macb_device *macb, const char *name)
 				MACB_BIT(TX_WRAP);
 		else
 			macb->tx_ring[i].ctrl = MACB_BIT(TX_USED);
+		macb->tx_ring[i].addr_high = 0x0;
 	}
 	macb_flush_ring_desc(macb, TX);
 
@@ -915,6 +920,28 @@ static int _macb_write_hwaddr(struct macb_device *macb, unsigned char *enetaddr)
 {
 	u32 hwaddr_bottom;
 	u16 hwaddr_top;
+
+	char mac_addr_buff[20], *p_mac_addr_buff;
+	u8 *hw_mac_addr;
+	u16 value, i;
+	const char hex_ascii[] = "0123456789abcdef";
+
+	hw_mac_addr = enetaddr;
+	p_mac_addr_buff = mac_addr_buff;
+
+	*p_mac_addr_buff++ = '[';
+	for (i = 0; i < 6; i++) {
+		value = hw_mac_addr[i] / 16;
+		*p_mac_addr_buff++ = hex_ascii[value];
+		value = hw_mac_addr[i] % 16;
+		*p_mac_addr_buff++ = hex_ascii[value];
+		*p_mac_addr_buff++ = ' ';
+	}
+	--p_mac_addr_buff;
+	*p_mac_addr_buff++ = ']';
+	*p_mac_addr_buff = '\0';
+
+	env_set("icicle_mac_addr", mac_addr_buff);
 
 	/* set hardware address */
 	hwaddr_bottom = enetaddr[0] | enetaddr[1] << 8 |
@@ -1188,6 +1215,7 @@ static const struct eth_ops macb_eth_ops = {
 static int macb_enable_clk(struct udevice *dev)
 {
 	struct macb_device *macb = dev_get_priv(dev);
+#ifdef COMMENT_CLOCK_CODE
 	struct clk clk;
 	ulong clk_rate;
 	int ret;
@@ -1210,7 +1238,9 @@ static int macb_enable_clk(struct udevice *dev)
 		return -EINVAL;
 
 	macb->pclk_rate = clk_rate;
+#endif
 
+	macb->pclk_rate = PFSOC_GEM_CLK_FREQ;
 	return 0;
 }
 #endif
