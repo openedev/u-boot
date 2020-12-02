@@ -61,6 +61,13 @@ config TARGET_IMX8MM_ICORE_MX8MM
 	  * i.Core MX8M Mini needs to mount on top of this Carrier board
 	    for creating complete i.Core MX8M Mini C.TOUCH 2.0 board.
 
+	  i.Core MX8M Mini C.TOUCH 2.0 10.1" OF
+	  * C.TOUCH 2.0 is a general purpose Carrier board.
+	  * 10.1" OF is a capacitive touch 10.1" Open Frame panel solutions.
+	  * i.Core MX8M Mini needs to mount on top of C.TOUCH 2.0 carrier with
+            pluged 10.1" OF for creating complete i.Core MX8M Mini C.TOUCH 2.0
+            10.1" Open Frame solution board.
+
 config TARGET_IMX8MN_EVK
 	bool "imx8mn DDR4 EVK board"
 	select IMX8MN
