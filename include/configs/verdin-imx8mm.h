@@ -6,37 +6,18 @@
 #ifndef __VERDIN_IMX8MM_H
 #define __VERDIN_IMX8MM_H
 
-#include <asm/arch/imx-regs.h>
-#include <linux/sizes.h>
+#define CONFIG_SYS_INIT_RAM_SIZE        SZ_2M
 
-#define CONFIG_SPL_MAX_SIZE		(148 * 1024)
-#define CONFIG_SYS_MONITOR_LEN		SZ_512K
-#define CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_SECTOR
-#define CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_SECTOR	0x300
-#define CONFIG_SYS_UBOOT_BASE	\
-	(QSPI0_AMBA_BASE + CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_SECTOR * 512)
+/* SDRAM configuration */
+#define PHYS_SDRAM_SIZE			SZ_2G /* 2GB DDR */
 
-#ifdef CONFIG_SPL_BUILD
-#define CONFIG_SPL_STACK		0x920000
-#define CONFIG_SPL_BSS_START_ADDR	0x910000
-#define CONFIG_SPL_BSS_MAX_SIZE		SZ_8K	/* 8 KB */
-#define CONFIG_SYS_SPL_MALLOC_START	0x42200000
-#define CONFIG_SYS_SPL_MALLOC_SIZE	SZ_512K	/* 512 KB */
-
-/* malloc f used before GD_FLG_FULL_MALLOC_INIT set */
-#define CONFIG_MALLOC_F_ADDR		0x930000
-/* For RAW image gives a error info not panic */
-#define CONFIG_SPL_ABORT_ON_RAW_IMAGE
-#endif
+#include "imx8mm-common.h"
 
 #define MEM_LAYOUT_ENV_SETTINGS \
 	"fdt_addr_r=0x44000000\0" \
 	"kernel_addr_r=0x42000000\0" \
 	"ramdisk_addr_r=0x46400000\0" \
 	"scriptaddr=0x46000000\0"
-
-#define CONFIG_LOADADDR		0x40480000
-#define CONFIG_SYS_LOAD_ADDR		CONFIG_LOADADDR
 
 /* Enable Distro Boot */
 #ifndef CONFIG_SPL_BUILD
@@ -75,24 +56,9 @@
 		"${blkcnt} / 0x200; mmc dev 0 1; mmc write ${loadaddr} 0x2 " \
 		"${blkcnt}; fi\0"
 
-#define CONFIG_SYS_INIT_RAM_ADDR        0x40000000
-#define CONFIG_SYS_INIT_RAM_SIZE        SZ_2M
-#define CONFIG_SYS_INIT_SP_OFFSET \
-	(CONFIG_SYS_INIT_RAM_SIZE - GENERATED_GBL_DATA_SIZE)
-#define CONFIG_SYS_INIT_SP_ADDR \
-	(CONFIG_SYS_INIT_RAM_ADDR + CONFIG_SYS_INIT_SP_OFFSET)
-
 #if defined(CONFIG_ENV_IS_IN_MMC)
 /* Environment in eMMC, before config block at the end of 1st "boot sector" */
 #endif
-
-/* Size of malloc() pool */
-#define CONFIG_SYS_MALLOC_LEN		SZ_32M
-#define CONFIG_SYS_SDRAM_BASE           0x40000000
-
-/* SDRAM configuration */
-#define PHYS_SDRAM                      0x40000000
-#define PHYS_SDRAM_SIZE			SZ_2G /* 2GB DDR */
 
 /* UART */
 #define CONFIG_MXC_UART_BASE		UART1_BASE_ADDR
