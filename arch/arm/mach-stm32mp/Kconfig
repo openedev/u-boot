@@ -16,7 +16,6 @@ config SPL
 	select SPL_REGMAP
 	select SPL_DM_RESET
 	select SPL_SERIAL_SUPPORT
-	select SPL_SPI_LOAD
 	select SPL_SYSCON
 	select SPL_WATCHDOG_SUPPORT if WATCHDOG
 	imply BOOTSTAGE_STASH if SPL_BOOTSTAGE
@@ -61,6 +60,23 @@ choice
 	optional
 
 config TARGET_ST_STM32MP15x
+	bool "STMicroelectronics STM32MP15x boards"
+	select STM32MP15x
+	imply BOOTCOUNT_LIMIT
+	imply BOOTSTAGE
+	imply CMD_BOOTCOUNT
+	imply CMD_BOOTSTAGE
+	imply CMD_CLS if CMD_BMP
+	imply DISABLE_CONSOLE
+	imply PRE_CONSOLE_BUFFER
+	imply SILENT_CONSOLE
+	help
+		target the STMicroelectronics board with SOC STM32MP15x
+		managed by board/st/stm32mp1:
+		Evalulation board (EV1) or Discovery board (DK1 and DK2).
+		The difference between board are managed with devicetree
+
+config TARGET_ICORE_STM32MP1
 	bool "STMicroelectronics STM32MP15x boards"
 	select STM32MP15x
 	imply BOOTCOUNT_LIMIT
@@ -177,6 +193,7 @@ config DEBUG_UART_CLOCK
 	default 64000000
 endif
 
+source "board/engicam/stm32mp1/Kconfig"
 source "board/st/stm32mp1/Kconfig"
 source "board/dhelectronics/dh_stm32mp1/Kconfig"
 
