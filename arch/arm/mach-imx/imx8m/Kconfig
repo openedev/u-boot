@@ -43,6 +43,31 @@ config TARGET_IMX8MM_EVK
 	select SUPPORT_SPL
 	select IMX8M_LPDDR4
 
+config TARGET_IMX8MM_ICORE_MX8MM
+	bool "Engicam i.Core MX8M Mini SOM"
+	select IMX8MM
+	select SUPPORT_SPL
+	select IMX8M_LPDDR4
+	help
+	  i.Core MX8M Mini is an EDIMM SOM based on NXP i.MX8MM.
+
+	  i.Core MX8M Mini EDIMM2.2:
+	  * EDIMM2.2 is a Form Factor Capacitive Evaluation Board.
+	  * i.Core MX8M Mini needs to mount on top of EDIMM2.2 for
+	    creating complete i.Core MX8M Mini EDIMM2.2 Starter Kit.
+
+	  i.Core MX8M Mini C.TOUCH 2.0
+	  * C.TOUCH 2.0 is a general purpose Carrier board.
+	  * i.Core MX8M Mini needs to mount on top of this Carrier board
+	    for creating complete i.Core MX8M Mini C.TOUCH 2.0 board.
+
+	  i.Core MX8M Mini C.TOUCH 2.0 10.1" OF
+	  * C.TOUCH 2.0 is a general purpose Carrier board.
+	  * 10.1" OF is a capacitive touch 10.1" Open Frame panel solutions.
+	  * i.Core MX8M Mini needs to mount on top of C.TOUCH 2.0 carrier with
+            pluged 10.1" OF for creating complete i.Core MX8M Mini C.TOUCH 2.0
+            10.1" Open Frame solution board.
+
 config TARGET_IMX8MN_EVK
 	bool "imx8mn DDR4 EVK board"
 	select IMX8MN
@@ -79,6 +104,7 @@ config TARGET_PHYCORE_IMX8MM
 	select IMX8M_LPDDR4
 endchoice
 
+source "board/engicam/imx8mm/Kconfig"
 source "board/freescale/imx8mq_evk/Kconfig"
 source "board/freescale/imx8mm_evk/Kconfig"
 source "board/freescale/imx8mn_evk/Kconfig"
