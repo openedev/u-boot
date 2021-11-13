@@ -13,8 +13,14 @@
 	model = "Rockchip PX30 EVB";
 	compatible = "rockchip,px30-evb", "rockchip,px30";
 
+	aliases {
+		mmc0 = &sdmmc;
+		mmc1 = &sdio;
+		mmc2 = &emmc;
+	};
+
 	chosen {
-		stdout-path = "serial2:115200n8";
+		stdout-path = "serial5:115200n8";
 	};
 
 	adc-keys {
@@ -126,22 +132,15 @@
 	};
 
 	panel@0 {
-		compatible = "sitronix,st7703";
+		compatible = "xinpeng,xpp055c272";
 		reg = <0>;
 		backlight = <&backlight>;
 		iovcc-supply = <&vcc_1v8>;
 		vci-supply = <&vcc3v3_lcd>;
 
-		ports {
-			#address-cells = <1>;
-			#size-cells = <0>;
-
-			port@0 {
-				reg = <0>;
-
-				mipi_in_panel: endpoint {
-					remote-endpoint = <&mipi_out_panel>;
-				};
+		port {
+			mipi_in_panel: endpoint {
+				remote-endpoint = <&mipi_out_panel>;
 			};
 		};
 	};
@@ -152,7 +151,6 @@
 };
 
 &emmc {
-	bus-width = <8>;
 	cap-mmc-highspeed;
 	mmc-hs200-1_8v;
 	non-removable;
@@ -168,6 +166,11 @@
 	snps,reset-gpio = <&gpio2 13 GPIO_ACTIVE_LOW>;
 	snps,reset-active-low;
 	snps,reset-delays-us = <0 50000 50000>;
+	status = "okay";
+};
+
+&gpu {
+	mali-supply = <&vdd_log>;
 	status = "okay";
 };
 
@@ -388,6 +391,43 @@
 	};
 };
 
+&i2c1 {
+	status = "okay";
+
+	sensor@d {
+		compatible = "asahi-kasei,ak8963";
+		reg = <0x0d>;
+		gpios = <&gpio0 RK_PB7 GPIO_ACTIVE_HIGH>;
+		vdd-supply = <&vcc3v0_pmu>;
+		mount-matrix = "1", /* x0 */
+			       "0", /* y0 */
+			       "0", /* z0 */
+			       "0", /* x1 */
+			       "1", /* y1 */
+			       "0", /* z1 */
+			       "0", /* x2 */
+			       "0", /* y2 */
+			       "1"; /* z2 */
+	};
+
+	touchscreen@14 {
+		compatible = "goodix,gt1151";
+		reg = <0x14>;
+		interrupt-parent = <&gpio0>;
+		interrupts = <RK_PA5 IRQ_TYPE_LEVEL_LOW>;
+		irq-gpios = <&gpio0 RK_PA5 GPIO_ACTIVE_LOW>;
+		reset-gpios = <&gpio0 RK_PB4 GPIO_ACTIVE_HIGH>;
+		VDDIO-supply = <&vcc3v3_lcd>;
+	};
+
+	sensor@4c {
+		compatible = "fsl,mma7660";
+		reg = <0x4c>;
+		interrupt-parent = <&gpio0>;
+		interrupts = <RK_PB7 IRQ_TYPE_LEVEL_LOW>;
+	};
+};
+
 &i2s1_2ch {
 	status = "okay";
 };
@@ -464,7 +504,6 @@
 };
 
 &sdmmc {
-	bus-width = <4>;
 	cap-mmc-highspeed;
 	cap-sd-highspeed;
 	card-detect-delay = <800>;
@@ -474,10 +513,10 @@
 	sd-uhs-sdr104;
 	vmmc-supply = <&vcc_sd>;
 	vqmmc-supply = <&vccio_sd>;
+	status = "okay";
 };
 
 &sdio {
-	bus-width = <4>;
 	cap-sd-highspeed;
 	keep-power-in-suspend;
 	non-removable;
@@ -486,13 +525,27 @@
 	status = "okay";
 };
 
-&uart1 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&uart1_xfer &uart1_cts>;
+&tsadc {
+	rockchip,hw-tshut-mode = <1>;
+	rockchip,hw-tshut-polarity = <1>;
 	status = "okay";
 };
 
-&uart2 {
+&u2phy {
+	status = "okay";
+
+	u2phy_host: host-port {
+		status = "okay";
+	};
+
+	u2phy_otg: otg-port {
+		status = "okay";
+	};
+};
+
+&uart1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart1_xfer &uart1_cts>;
 	status = "okay";
 };
 
