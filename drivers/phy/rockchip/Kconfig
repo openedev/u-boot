@@ -34,4 +34,11 @@ config PHY_ROCKCHIP_TYPEC
 	help
 	  Enable this to support the Rockchip USB TYPEC PHY.
 
+config PHY_ROCKCHIP_NANENG_COMBOPHY
+	bool "Support Rockchip NANENG combo PHY Driver"
+	depends on ARCH_ROCKCHIP
+	select PHY
+	help
+	  Enable this to support the Rockchip NANENG combo PHY.
+
 endmenu
