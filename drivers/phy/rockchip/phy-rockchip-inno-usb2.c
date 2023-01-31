@@ -39,23 +39,75 @@ struct usb2phy_reg {
 	unsigned int	enable;
 };
 
+/**
+ * struct rockchip_chg_det_reg: usb charger detect registers
+ * @cp_det: charging port detected successfully.
+ * @dcp_det: dedicated charging port detected successfully.
+ * @dp_det: assert data pin connect successfully.
+ * @idm_sink_en: open dm sink curren.
+ * @idp_sink_en: open dp sink current.
+ * @idp_src_en: open dm source current.
+ * @rdm_pdwn_en: open dm pull down resistor.
+ * @vdm_src_en: open dm voltage source.
+ * @vdp_src_en: open dp voltage source.
+ * @opmode: utmi operational mode.
+ */
+struct rockchip_chg_det_reg {
+	struct usb2phy_reg	cp_det;
+	struct usb2phy_reg	dcp_det;
+	struct usb2phy_reg	dp_det;
+	struct usb2phy_reg	idm_sink_en;
+	struct usb2phy_reg	idp_sink_en;
+	struct usb2phy_reg	idp_src_en;
+	struct usb2phy_reg	rdm_pdwn_en;
+	struct usb2phy_reg	vdm_src_en;
+	struct usb2phy_reg	vdp_src_en;
+	struct usb2phy_reg	opmode;
+};
+
+/**
+ * struct rockchip_usb2phy_port_cfg - usb-phy port configuration.
+ * @phy_sus: phy suspend register.
+ * @bvalid_det_en: vbus valid rise detection enable register.
+ * @bvalid_det_st: vbus valid rise detection status register.
+ * @bvalid_det_clr: vbus valid rise detection clear register.
+ * @id_det_en: id detection enable register.
+ * @id_det_st: id detection state register.
+ * @id_det_clr: id detection clear register.
+ * @ls_det_en: linestate detection enable register.
+ * @ls_det_st: linestate detection state register.
+ * @ls_det_clr: linestate detection clear register.
+ * @utmi_avalid: utmi vbus avalid status register.
+ * @utmi_bvalid: utmi vbus bvalid status register.
+ * @utmi_id: utmi id state register.
+ * @utmi_ls: utmi linestate state register.
+ * @utmi_hstdet: utmi host disconnect register.
+ */
 struct rockchip_usb2phy_port_cfg {
 	struct usb2phy_reg	phy_sus;
 	struct usb2phy_reg	bvalid_det_en;
 	struct usb2phy_reg	bvalid_det_st;
 	struct usb2phy_reg	bvalid_det_clr;
+	struct usb2phy_reg	id_det_en;
+	struct usb2phy_reg	id_det_st;
+	struct usb2phy_reg	id_det_clr;
 	struct usb2phy_reg	ls_det_en;
 	struct usb2phy_reg	ls_det_st;
 	struct usb2phy_reg	ls_det_clr;
 	struct usb2phy_reg	utmi_avalid;
 	struct usb2phy_reg	utmi_bvalid;
+	struct usb2phy_reg	utmi_id;
 	struct usb2phy_reg	utmi_ls;
 	struct usb2phy_reg	utmi_hstdet;
 };
 
 struct rockchip_usb2phy_cfg {
 	unsigned int reg;
+	u32	num_ports;
+	struct usb2phy_reg	clkout_ctl;
 	const struct rockchip_usb2phy_port_cfg port_cfgs[USB2PHY_NUM_PORTS];
+	const struct rockchip_chg_det_reg	chg_det;
+
 };
 
 struct rockchip_usb2phy {
@@ -179,10 +231,17 @@ static int rockchip_usb2phy_probe(struct udevice *dev)
 	if (IS_ERR(priv->reg_base))
 		return PTR_ERR(priv->reg_base);
 
-	ret = ofnode_read_u32(dev_ofnode(dev), "reg", &reg);
-	if (ret) {
+	if (ofnode_read_u32(dev_ofnode(dev), "reg", &reg)) {
 		dev_err(dev, "failed to read reg property (ret = %d)\n", ret);
-		return ret;
+		return -EINVAL;
+	}
+
+	/* support address_cells=2 */
+	if (reg == 0) {
+		if (ofnode_read_u32_index(dev_ofnode(dev), "reg", 1, &reg)) {
+			dev_err(dev, "failed to read reg property (ret = %d)\n", ret);
+			return -EINVAL;
+		}
 	}
 
 	phy_cfgs = (const struct rockchip_usb2phy_cfg *)
@@ -289,10 +348,81 @@ static const struct rockchip_usb2phy_cfg rk3399_usb2phy_cfgs[] = {
 	{ /* sentinel */ }
 };
 
+static const struct rockchip_usb2phy_cfg rk3568_phy_cfgs[] = {
+	{
+		.reg = 0xfe8a0000,
+		.num_ports	= 2,
+		.clkout_ctl	= { 0x0008, 4, 4, 1, 0 },
+		.port_cfgs	= {
+			[USB2PHY_PORT_OTG] = {
+				.phy_sus	= { 0x0000, 8, 0, 0, 0x1d1 },
+				.bvalid_det_en	= { 0x0080, 3, 2, 0, 3 },
+				.bvalid_det_st	= { 0x0084, 3, 2, 0, 3 },
+				.bvalid_det_clr = { 0x0088, 3, 2, 0, 3 },
+				.id_det_en	= { 0x0080, 5, 4, 0, 3 },
+				.id_det_st	= { 0x0084, 5, 4, 0, 3 },
+				.id_det_clr	= { 0x0088, 5, 4, 0, 3 },
+				.utmi_avalid	= { 0x00c0, 10, 10, 0, 1 },
+				.utmi_bvalid	= { 0x00c0, 9, 9, 0, 1 },
+				.utmi_id	= { 0x00c0, 6, 6, 0, 1 },
+			},
+			[USB2PHY_PORT_HOST] = {
+				/* Select suspend control from controller */
+				.phy_sus	= { 0x0004, 8, 0, 0x1d2, 0x1d2 },
+				.ls_det_en	= { 0x0080, 1, 1, 0, 1 },
+				.ls_det_st	= { 0x0084, 1, 1, 0, 1 },
+				.ls_det_clr	= { 0x0088, 1, 1, 0, 1 },
+				.utmi_ls	= { 0x00c0, 17, 16, 0, 1 },
+				.utmi_hstdet	= { 0x00c0, 19, 19, 0, 1 }
+			}
+		},
+		.chg_det = {
+			.opmode		= { 0x0000, 3, 0, 5, 1 },
+			.cp_det		= { 0x00c0, 24, 24, 0, 1 },
+			.dcp_det	= { 0x00c0, 23, 23, 0, 1 },
+			.dp_det		= { 0x00c0, 25, 25, 0, 1 },
+			.idm_sink_en	= { 0x0008, 8, 8, 0, 1 },
+			.idp_sink_en	= { 0x0008, 7, 7, 0, 1 },
+			.idp_src_en	= { 0x0008, 9, 9, 0, 1 },
+			.rdm_pdwn_en	= { 0x0008, 10, 10, 0, 1 },
+			.vdm_src_en	= { 0x0008, 12, 12, 0, 1 },
+			.vdp_src_en	= { 0x0008, 11, 11, 0, 1 },
+		},
+	},
+	{
+		.reg = 0xfe8b0000,
+		.num_ports	= 2,
+		.clkout_ctl	= { 0x0008, 4, 4, 1, 0 },
+		.port_cfgs	= {
+			[USB2PHY_PORT_OTG] = {
+				.phy_sus	= { 0x0000, 8, 0, 0x1d2, 0x1d1 },
+				.ls_det_en	= { 0x0080, 0, 0, 0, 1 },
+				.ls_det_st	= { 0x0084, 0, 0, 0, 1 },
+				.ls_det_clr	= { 0x0088, 0, 0, 0, 1 },
+				.utmi_ls	= { 0x00c0, 5, 4, 0, 1 },
+				.utmi_hstdet	= { 0x00c0, 7, 7, 0, 1 }
+			},
+			[USB2PHY_PORT_HOST] = {
+				.phy_sus	= { 0x0004, 8, 0, 0x1d2, 0x1d1 },
+				.ls_det_en	= { 0x0080, 1, 1, 0, 1 },
+				.ls_det_st	= { 0x0084, 1, 1, 0, 1 },
+				.ls_det_clr	= { 0x0088, 1, 1, 0, 1 },
+				.utmi_ls	= { 0x00c0, 17, 16, 0, 1 },
+				.utmi_hstdet	= { 0x00c0, 19, 19, 0, 1 }
+			}
+		},
+	},
+	{ /* sentinel */ }
+};
+
 static const struct udevice_id rockchip_usb2phy_ids[] = {
 	{
 		.compatible = "rockchip,rk3399-usb2phy",
 		.data = (ulong)&rk3399_usb2phy_cfgs,
+	},
+	{
+		.compatible = "rockchip,rk3568-usb2phy",
+		.data = (ulong)&rk3568_phy_cfgs,
 	},
 	{ /* sentinel */ }
 };
