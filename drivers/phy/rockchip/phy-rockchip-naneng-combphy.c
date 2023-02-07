@@ -255,7 +255,7 @@ static int rockchip_combphy_parse_dt(struct udevice *dev,
 		return PTR_ERR(&priv->ref_clk);
 	}
 
-	ret = reset_get_by_name(dev, "combphy", &priv->phy_rst);
+	ret = reset_get_by_index(dev, 0, &priv->phy_rst);
 	if (ret) {
 		dev_err(dev, "no phy reset control specified\n");
 		return ret;
