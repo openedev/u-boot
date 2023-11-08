@@ -37,7 +37,7 @@
 	"nandroot=ubi0:rootfs rootfstype=ubifs\0" \
 	"mmcautodetect=yes\0" \
 	"mmcargs=setenv bootargs console=${console},${baudrate} " \
-		"root=${mmcroot}\0" \
+		"root=${mmcroot} ${mtdparts}\0" \
 	"ubiargs=setenv bootargs console=${console},${baudrate} " \
 		"ubi.mtd=5 root=${nandroot} ${mtdparts}\0" \
 	"loadbootscript=" \
@@ -67,6 +67,7 @@
 			"bootm; " \
 		"fi\0" \
 	"mmcboot=echo Booting from mmc ...; " \
+		"mtdparts; " \
 		"if mmc rescan; then " \
 			"if run loadbootscript; then " \
 				"run bootscript; " \
