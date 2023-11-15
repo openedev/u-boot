@@ -56,6 +56,7 @@ enum engicam_boards {
 static const char * const board_fdt_file[ENGICAM_BOARDS] = {
 	[IMX6Q_ICORE] = "imx6q-icore.dtb",
 	[IMX6DL_ICORE] = "imx6dl-icore.dtb",
+	[IMX6DL_ICORE] = "icorem6dl-italdes.dtb",
 	[IMX6Q_ICORE_MIPI] = "imx6q-icore-mipi.dtb",
 	[IMX6DL_ICORE_MIPI] = "imx6dl-icore-mipi.dtb",
 	[IMX6Q_ICORE_RQS] = "imx6q-icore-rqs.dtb",
@@ -102,6 +103,8 @@ static enum engicam_boards engicam_board_detect(void)
 			return IMX6UL_ISIOT_EMMC;
 	else if (!strcmp(cmp_dtb, "imx6ul-isiot-nand"))
 			return IMX6UL_ISIOT_NAND;
+	else if (!strcmp(cmp_dtb, "imx6dl-icore"))
+			return IMX6DL_ICORE;
 
 	return -EINVAL;
 }
