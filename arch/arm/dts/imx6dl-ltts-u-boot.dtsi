@@ -1,0 +1,34 @@
+// SPDX-License-Identifier: GPL-2.0+
+/*
+ * Copyright (c) 2023 Edgeble AI Technologies Pvt. Ltd.
+ */
+
+#include "imx6qdl-u-boot.dtsi"
+
+&soc {
+	bootph-all;
+};
+
+&aips1 {
+	bootph-all;
+};
+
+&pinctrl_uart2 {
+	bootph-all;
+};
+
+&uart2 {
+	bootph-all;
+};
+
+&usdhc1 {
+	bootph-pre-ram;
+};
+
+&pinctrl_usdhc1 {
+	bootph-pre-ram;
+};
+
+&gpio7 {
+	bootph-pre-ram;
+};

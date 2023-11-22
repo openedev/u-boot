@@ -323,6 +323,24 @@ config TARGET_MX6DL_MAMOJ
 	select SUPPORT_SPL
 	imply CMD_DM
 
+config TARGET_IMX6DL_LTTS
+	bool "Support LTTS i.MX6DL/SOLO"
+	depends on MX6QDL
+	select BOARD_LATE_INIT
+	select DM
+	select DM_GPIO
+	select DM_I2C
+	select DM_MMC
+	select DM_THERMAL
+	select OF_CONTROL
+	select SPL_DM if SPL
+	select SPL_OF_CONTROL if SPL
+	select SPL_OF_LIBFDT
+	select SPL_PINCTRL if SPL
+	select SPL_SEPARATE_BSS if SPL
+	select SUPPORT_SPL
+	imply CMD_DM
+
 config TARGET_MX6Q_ENGICAM
 	bool "Support Engicam i.Core(RQS)"
 	depends on MX6QDL
@@ -702,6 +720,7 @@ source "board/gateworks/gw_ventana/Kconfig"
 source "board/kontron/sl-mx6ul/Kconfig"
 source "board/kosagi/novena/Kconfig"
 source "board/softing/vining_2000/Kconfig"
+source "board/ltts/imx6dl/Kconfig"
 source "board/liebherr/display5/Kconfig"
 source "board/liebherr/mccmon6/Kconfig"
 source "board/logicpd/imx6/Kconfig"

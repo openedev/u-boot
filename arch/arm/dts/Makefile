@@ -859,6 +859,7 @@ dtb-y += \
 	imx6dl-icore.dtb \
 	imx6dl-icore-mipi.dtb \
 	imx6dl-icore-rqs.dtb \
+	imx6dl-ltts.dtb \
 	imx6dl-mba6a.dtb \
 	imx6dl-mba6b.dtb \
 	imx6dl-mamoj.dtb \

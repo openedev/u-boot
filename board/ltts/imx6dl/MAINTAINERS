@@ -1,0 +1,9 @@
+IMX6DL_LTTS BOARD
+M:	Jagan Teki <jagan@edgeble.ai>
+S:	Maintained
+F:	board/ltts/imx6dl
+F:	include/configs/imx6dl-ltts.h
+F:	configs/imx6dl_ltts_mmc_defconfig
+F:	configs/imx6dl_ltts_nand_defconfig
+F:	arch/arm/dts/imx6dl-ltts-u-boot.dtsi
+F:	arch/arm/dts/imx6dl-ltts.dts
