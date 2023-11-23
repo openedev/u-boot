@@ -37,9 +37,9 @@
 	"nandroot=ubi0:rootfs rootfstype=ubifs\0" \
 	"mmcautodetect=yes\0" \
 	"mmcargs=setenv bootargs console=${console},${baudrate} " \
-		"root=${mmcroot} ${mtdparts}\0" \
+		"root=${mmcroot} ${mtdparts} video=mxcfb0:dev=ldb,LCD-DENST\0" \
 	"ubiargs=setenv bootargs console=${console},${baudrate} " \
-		"ubi.mtd=5 root=${nandroot} ${mtdparts}\0" \
+		"ubi.mtd=5 root=${nandroot} ${mtdparts} video=mxcfb0:dev=ldb,LCD-DENST\0" \
 	"loadbootscript=" \
 		"fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${script};\0" \
 	"bootscript=echo Running bootscript from mmc ...; " \
