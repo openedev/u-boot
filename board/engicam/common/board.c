@@ -56,7 +56,7 @@ enum engicam_boards {
 static const char * const board_fdt_file[ENGICAM_BOARDS] = {
 	[IMX6Q_ICORE] = "imx6q-icore.dtb",
 	[IMX6DL_ICORE] = "imx6dl-icore.dtb",
-	[IMX6DL_ICORE] = "icorem6dl-italdes.dtb",
+	[IMX6DL_ICORE] = "icoremx6dl-italdes-lvds.dtb",
 	[IMX6Q_ICORE_MIPI] = "imx6q-icore-mipi.dtb",
 	[IMX6DL_ICORE_MIPI] = "imx6dl-icore-mipi.dtb",
 	[IMX6Q_ICORE_RQS] = "imx6q-icore-rqs.dtb",
